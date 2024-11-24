@@ -1,1 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
+*{
+  margin: 0;padding: 0;
+  box-sizing: border-box;
+}
+body,button,input{
+  font-family: "Outfit", sans-serif;
+ 
+}
+
+.brand{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  img{
+    height: 5rem;
+    margin: 1rem;
+  }
+  h1{
+    color: white;
+    text-transform: uppercase;
+  }
+ 
+}
+.container{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2rem;
+  align-items: center;
+  background-color:#86c232 ;
+}
+form{
+  display: flex;
+  flex-direction: column;
+  background-color: #222629;
+  gap: 3rem;
+  border-radius: 2rem;
+  padding: 3rem,5rem;
+  input{
+background-color: transparent;
+padding: 1rem;
+border: 0.2rem solid #61892f ;
+border-radius: 0.4rem;
+color: white;
+width: 100%;
+font-size: 1rem;
+&:focus{
+  border: solid #61892f;
+  outline: none;
+}
+  }
+}
+button{
+  background-color: #314617;
+  color: white;
+  padding: 1rem,2rem;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1rem;
+  text-transform: uppercase;
+ border-radius: 0.4rem;
+  transition: 0.5s ease-in-out;
+  &:hover{
+    background-color: #61892f;
+  }
+}
+span{
+  padding: 2rem;
+  color: white;
+  text-transform: uppercase;
+  a{
+    color: greenyellow;
+    text-transform: none;
+    font-weight: bold;
+  }
+}
