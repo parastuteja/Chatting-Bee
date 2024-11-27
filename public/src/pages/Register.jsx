@@ -6,51 +6,60 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from 'axios';
 import { registerRoute } from '../utils/APIroutes';
 
-function Register() {
+export default function Register() {
   const [values, setValues] = useState({
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-
+  
   const toastOptions = {
     position: 'bottom-right',
     autoClose: 8000,
     pauseOnHover: true,
     theme: 'dark'
   };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const validationResponse = handleValidation();
-    if (validationResponse.isValid) {
-      const { password, username, email } = values;
-      try {
-        const { data } = await axios.post(registerRoute, { username, email, password });
-        toast.success(data.message, toastOptions); // Assuming the API response has a message
-      } catch (error) {
-        toast.error(error.response.data.message || 'An error occurred', toastOptions);
-      }
-    } else {
-      toast.error(validationResponse.message, toastOptions);
-    }
-  };
-
-  const handleValidation = () => {
-    const { password, confirmPassword, username, email } = values;
-    if (!username || !email || !password || !confirmPassword) {
-      return { isValid: false, message: 'All fields are required.' };
-    }
-    if (password !== confirmPassword) {
-      return { isValid: false, message: 'Passwords do not match.' };
-    }
-    return { isValid: true };
-  };
-
   const handleChange = (event) => {
     setValues({ ...values, [event.target.name]: event.target.value });
   };
+  const handleValidation=()=>{
+const {username,email,password,confirmPassword}=values
+if(password!==confirmPassword){
+  toast.error("password and current passowrd should be same",toastOptions)
+  return false;
+}
+else if(username.length<3){
+  toast.error("username should be greater than 3 characters",toastOptions)
+  return false;
+}
+ else if(password.length<8){
+  toast.error("password should be greater than 8 characters",toastOptions)
+  return false;
+}
+else if(password.length<8){
+  toast.error("password should be greater than 8 characters",toastOptions)
+  return false;
+}
+else if(email===''){
+  toast.error("password should be greater than 8 characters",toastOptions)
+  return false;
+}
+return true;
+  }
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if(handleValidation()){ const { password, username, email } = values;
+    const{data}=await axios.post(registerRoute,{email,username,password
+    })
+  
+  
+     
+  } 
+  };
+
+  
+  
 
   return (
     <>
@@ -72,4 +81,3 @@ function Register() {
   );
 }
 
-export default Register;
