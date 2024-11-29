@@ -1,83 +1,142 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
-import logo from "../Assets/Logo.svg";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+
+import { useNavigate, Link } from "react-router-dom";
+import Logo from '../Assets/Logo.svg'
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from 'axios';
-import { registerRoute } from '../utils/APIroutes';
+import { registerRoute } from "../utils/APIroutes";
 
 export default function Register() {
-  const [values, setValues] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
-  
+  const navigate = useNavigate();
   const toastOptions = {
-    position: 'bottom-right',
+    position: "bottom-right",
     autoClose: 8000,
     pauseOnHover: true,
-    theme: 'dark'
+    draggable: true,
+    theme: "dark",
   };
+  const [values, setValues] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  useEffect(() => {
+    if (localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+      navigate("/");
+    }
+  })
+
   const handleChange = (event) => {
     setValues({ ...values, [event.target.name]: event.target.value });
   };
-  const handleValidation=()=>{
-const {username,email,password,confirmPassword}=values
-if(password!==confirmPassword){
-  toast.error("password and current passowrd should be same",toastOptions)
-  return false;
-}
-else if(username.length<3){
-  toast.error("username should be greater than 3 characters",toastOptions)
-  return false;
-}
- else if(password.length<8){
-  toast.error("password should be greater than 8 characters",toastOptions)
-  return false;
-}
-else if(password.length<8){
-  toast.error("password should be greater than 8 characters",toastOptions)
-  return false;
-}
-else if(email===''){
-  toast.error("password should be greater than 8 characters",toastOptions)
-  return false;
-}
-return true;
-  }
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if(handleValidation()){ const { password, username, email } = values;
-    const{data}=await axios.post(registerRoute,{email,username,password
-    })
-  
-  
-     
-  } 
+
+  const handleValidation = () => {
+    const { password, confirmPassword, username, email } = values;
+    if (password !== confirmPassword) {
+      toast.error(
+        "Password and confirm password should be same.",
+        toastOptions
+      );
+      return false;
+    } else if (username.length < 3) {
+      toast.error(
+        "Username should be greater than 3 characters.",
+        toastOptions
+      );
+      return false;
+    } else if (password.length < 8) {
+      toast.error(
+        "Password should be equal or greater than 8 characters.",
+        toastOptions
+      );
+      return false;
+    } else if (email === "") {
+      toast.error("Email is required.", toastOptions);
+      return false;
+    }
+
+    return true;
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (handleValidation()) {
+      const { email, username, password } = values;
+      try {
+        const { data } = await axios.post(registerRoute, {
+          username,
+          email,
+          password,
+        });
   
-  
+        if (data.status === false) {
+          toast.error(data.msg, toastOptions);
+        }
+        if (data.status === true) {
+          localStorage.setItem(
+            process.env.REACT_APP_LOCALHOST_KEY,
+            JSON.stringify(data.user)
+          );
+          navigate("/");
+        }
+      } catch (error) {
+        // Handle the error here
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          toast.error(`Error: ${error.response.data.msg || 'An error occurred'}`, toastOptions);
+        } else if (error.request) {
+          // The request was made but no response was received
+          toast.error("Network error: No response received from server.", toastOptions);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          toast.error(`Error: ${error.message}`, toastOptions);
+        }
+      }
+    }
+  }
 
   return (
     <>
-      <div className='container'>
-        <form onSubmit={handleSubmit}>
-          <div className='brand'>
-            <img src={logo} alt='' />
+      <div className="container">
+        <form action="" onSubmit={(event) => handleSubmit(event)}>
+          <div className="brand">
+            <img src={Logo} alt="logo" />
+            <h1>snappy</h1>
           </div>
-          <input type='text' placeholder='username' name='username' onChange={handleChange} />
-          <input type='text' placeholder='email' name='email' onChange={handleChange} />
-          <input type='password' placeholder='password' name='password' onChange={handleChange} />
-          <input type='password' placeholder='confirm password' name='confirmPassword' onChange={handleChange} />
-          <button type='submit'>Create User</button>
-          <span>already have an account?<Link to='/Login'>Login</Link></span>
+          <input
+            type="text"
+            placeholder="Username"
+            name="username"
+            onChange={(e) => handleChange(e)}
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            name="email"
+            onChange={(e) => handleChange(e)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            name="password"
+            onChange={(e) => handleChange(e)}
+          />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            name="confirmPassword"
+            onChange={(e) => handleChange(e)}
+          />
+          <button type="submit">Create User</button>
+          <span>
+            Already have an account ? <Link to="/login">Login.</Link>
+          </span>
         </form>
-      </div>
+    </div>
       <ToastContainer />
     </>
   );
 }
-
