@@ -64,12 +64,12 @@ export default function Register() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (handleValidation()) {
-      const { email, username, password } = values;
+      const { email, username, password } = event.target.elements
       try {
         const { data } = await axios.post(registerRoute, {
-          username,
-          email,
-          password,
+          username:username.value,
+          email:email.value,
+          password:password.value,
         });
   
         if (data.status === false) {
@@ -83,15 +83,14 @@ export default function Register() {
           navigate("/");
         }
       } catch (error) {
-        // Handle the error here
+       
         if (error.response) {
-          // The request was made and the server responded with a status code
+         
           toast.error(`Error: ${error.response.data.msg || 'An error occurred'}`, toastOptions);
         } else if (error.request) {
-          // The request was made but no response was received
           toast.error("Network error: No response received from server.", toastOptions);
         } else {
-          // Something happened in setting up the request that triggered an Error
+        
           toast.error(`Error: ${error.message}`, toastOptions);
         }
       }
@@ -101,10 +100,10 @@ export default function Register() {
   return (
     <>
       <div className="container">
-        <form action="" onSubmit={(event) => handleSubmit(event)}>
+        <form action="" onSubmit={handleSubmit}>
           <div className="brand">
             <img src={Logo} alt="logo" />
-            <h1>snappy</h1>
+           
           </div>
           <input
             type="text"
