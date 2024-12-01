@@ -41,7 +41,7 @@ avatars.map((avatars,index)=>{
   return(`avatar ${selectedAvatar ===index?"selected":''}`)
 }) }
       </div>
-      <img src={}
+      <img src={}/>
     </div>
     </aComponent>
     <ToastContainer/>
