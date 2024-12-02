@@ -41,7 +41,10 @@ avatars.map((avatars,index)=>{
   return(`avatar ${selectedAvatar ===index?"selected":''}`)
 }) }
       </div>
-      <img src={}/>
+      <img  src={`data:image/svg+xml;base64,${avatar}`}
+      alt='avatar'
+      key={avatar}
+      onClick={()=>setSelectedAvatar(index)}/>
     </div>
     </aComponent>
     <ToastContainer/>
