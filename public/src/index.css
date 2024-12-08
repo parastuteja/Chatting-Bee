@@ -137,3 +137,154 @@ display: flex;
     }
   }
 }
+.aContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 3rem;
+  background-color: #131324;
+ 
+ 
+
+  .loader {
+    max-inline-size: 100%;
+  }
+
+  .title-container {
+    h1 {
+      color: white;
+    }
+  }
+  .avatars {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+
+
+    .avatar {
+      border: 0.4rem solid transparent;
+      padding: 0.4rem;
+      border-radius: 5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.5s ease-in-out;
+      img {
+        height: 6rem;
+        transition: 0.5s ease-in-out;
+      }
+    }
+    .selected {
+      border: 0.4rem solid #4e0eff;
+    }
+  }
+  .submit-btn {
+    background-color: #4e0eff;
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0.4rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    &:hover {
+      background-color: #4e0eff;
+    }
+  }
+}
+/* SetAvatar.css */
+
+/* SetAvatar.css */
+
+.aContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full viewport height */
+  background-color: #e8f5e9; /* Light green background */
+}
+
+.bContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #fdfdfd; /* Off-white background for the container */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 90%;
+  max-width: 600px; /* Maximum width for the container */
+}
+
+.title-container {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.title-container h1 {
+  font-size: 24px;
+  color: #333; /* Dark text color for contrast */
+}
+
+.avatars {
+  display: flex;
+  justify-content: center; /* Center avatars horizontally */
+  flex-wrap: wrap; /* Allow wrapping of avatars */
+  margin-bottom: 20px;
+}
+
+.avatar {
+  cursor: pointer;
+  border: 2px solid transparent; /* Default border */
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border 0.3s ease;
+  margin: 5px; /* Add some margin between avatars */
+}
+
+.avatar.selected {
+  border: 2px solid #4caf50; /* Highlight selected avatar with a green border */
+}
+
+.avatar img {
+  width: 100px; /* Fixed width for avatars */
+  height: 100px; /* Fixed height for avatars */
+  border-radius: 10px; /* Rounded corners for avatars */
+  object-fit: cover; /* Cover the area without distortion */
+}
+
+.submit-btn {
+  background-color: #4caf50; /* Light green button color */
+  color: white; /* Button text color */
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px; /* Add some space above the button */
+}
+
+.submit-btn:hover {
+  background-color: #388e3c; /* Darker green shade on hover */
+}
+/* Loader styles */
+.loader-container {
+  position: fixed; /* Fixed position to cover the entire screen */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  background-color: rgba(255, 255, 255, 0.8); /* Optional: semi-transparent background */
+  z-index: 999; /* Ensure it appears above other content */
+}
+
+.loader {
+  width: 100px; /* Set the width of the loader */
+  height: 100px; /* Set the height of the loader */
+}

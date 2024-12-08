@@ -5,5 +5,5 @@ const express =require('express')
 const router=express.Router()
 router.post("/Register",register)
 router.post("/Login",login)
- router.post('/SetAvatar',setAvatar)
+ router.post('/SetAvatar/:id',setAvatar)
 module.exports=router;
