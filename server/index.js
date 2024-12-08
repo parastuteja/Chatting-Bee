@@ -1,27 +1,34 @@
-const express= require ('express');
-const cors =require('cors')
-const mongoose = require ("mongoose")
+const express = require('express');
+const cors = require('cors');
+const mongoose = require('mongoose');
+const route = require('./Routes/userRoutes');
+const app = express();
+require('dotenv').config();
 
-const route=require('./Routes/userRoutes')
-const app=express();
-require ('dotenv').config()
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/api/auth",route)
+app.use("/api/auth", route);
+
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("DB Connetion Successfull");
+    console.log("DB Connection Successful");
   })
   .catch((err) => {
-    console.log(err.message);
+    console.log("DB Connection Error:", err.message);
   });
 
-const server=app.listen(process.env.port,()=>{
-    console.log(`server is connected on port${process.env.port}`)
-})
+const PORT = process.env.PORT || 5000; // Default to 5000 if PORT is not set
+const server = app.listen(PORT, () => {
+  console.log(`Server is connected on port ${PORT}`);
+});
+
+// Optional: Handle server errors
+server.on('error', (err) => {
+  console.error("Server error:", err);
+});

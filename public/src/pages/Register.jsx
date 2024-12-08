@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
 import { useNavigate, Link } from "react-router-dom";
 import Logo from '../Assets/Logo.svg'
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { registerRoute } from "../utils/APIroutes";
+import { registerRoute } from '../utils/APIroutes.js';
 
 export default function Register() {
   const navigate = useNavigate();

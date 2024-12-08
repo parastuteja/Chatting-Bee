@@ -1,4 +1,4 @@
-const { default: SetAvatar } = require("../../public/src/pages/SetAvatar")
+const SetAvatar = require('../../public/src/pages/SetAvatar.jsx');
 const { register } = require("../Controller/userController")
 const { login } = require("../Controller/userController")
 const express=require("express")
