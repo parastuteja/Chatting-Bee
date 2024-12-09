@@ -1,20 +1,12 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { Buffer } from "buffer";
 import loader from "../Assets/Loader.gif";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { setAvatarRoute } from "../utils/APIroutes";
-
-const aContainer = styled.div`
-  // Your styles here
-`;
-
-const bContainer = styled.div`
-  // Your styles here
-`;
-
 export default function SetAvatar() {
   const api = `https://api.multiavatar.com/4645646`;
   const navigate = useNavigate();
@@ -29,11 +21,10 @@ export default function SetAvatar() {
     theme: "dark",
   };
 
-  useEffect(() => {
-    if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+  useEffect(async () => {
+    if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY))
       navigate("/login");
-    }
-  }, [navigate]);
+  }, []);
 
   const setProfilePicture = async () => {
     if (selectedAvatar === undefined) {
@@ -62,59 +53,125 @@ export default function SetAvatar() {
   };
 
   useEffect(() => {
-    const fetchAvatars = async () => {
-      const data = []; // Correctly initialize data as an array
-      for (let i = 0; i < 4; i++) {
-        try {
-          const response = await axios.get(`${api}/${Math.round(Math.random() * 1000)}`, {
-            responseType: 'arraybuffer' // Ensure you get the response as binary data
-          });
-          const base64String = btoa(String.fromCharCode(...new Uint8Array(response.data)));
-          data.push(base64String);
-        } catch (error) {
-          console.error("Error fetching avatar:", error);
+    const fetchData = async () => {
+      const data = [];
+      try {
+        for (let i = 0; i < 4; i++) {
+          const response = await axios.get(`${api}/${Math.round(Math.random() * 1000)}`);
+          const buffer = Buffer.from(response.data);
+          data.push(buffer.toString("base64"));
         }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setAvatars(data);
+        setIsLoading(false);
       }
-      setAvatars(data);
-      setIsLoading(false);
     };
-
-    fetchAvatars(); // Call the async function
-  }, [api]); // Add api as a dependency if it can change
-
+  
+    fetchData(); // Call the fetchData function here
+  
+    // No return statement needed here
+  }, []); // Add an empty dependency array to run this effect only once
   return (
     <>
-     {isLoading ? (
-  <div className="loader-container">
-    <img src={loader} alt="Loading..." className="loader" />
-  </div>
-) : (
-  <div className="bContainer">
-    <div className="title-container">
-      <h1>Pick an Avatar as your profile picture</h1>
-    </div>
-    <div className="avatars">
-      {avatars.map((avatar, index) => {
-        return (
-          <div
-            className={`avatar ${selectedAvatar === index ? "selected" : ""}`}
-            key={index} // Add a key prop here
-          >
-            <img
-              src={`data:image/svg+xml;base64,${avatar}`}
-              alt="avatar"
-              onClick={() => setSelectedAvatar(index)}
-            />
+      {isLoading ? (
+        <Container>
+          <img src={loader} alt="loader" className="loader" />
+        </Container>
+      ) : (
+        <Container>
+          <div className="title-container">
+            <h1>Pick an Avatar as your profile picture</h1>
           </div>
-        );
-      })}
-    </div>
-    <button onClick={setProfilePicture} className="submit-btn">
-      Set as Profile Picture
-    </button>
-    <ToastContainer />
-  </div>
-)}
+          <div className="avatars">
+            {avatars.map((avatar, index) => {
+              return (
+                <div
+                  className={`avatar ${
+                    selectedAvatar === index ? "selected" : ""
+                  }`}
+                >
+                  <img
+                    src={`data:image/svg+xml;base64,${avatar}`}
+                    alt="avatar"
+                    key={avatar}
+                    onClick={() => setSelectedAvatar(index)}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <button onClick={setProfilePicture} className="submit-btn">
+            Set as Profile Picture
+          </button>
+          <ToastContainer />
+        </Container>
+      )}
+    </>
+  );
+}
 
-</>
-  )}
+
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 3rem;
+  background-color: #131324;
+  height: 100vh;
+  width: 100vw;
+
+  .loader {
+    max-width: 100%; /* Changed from max-inline-size to max-width */
+  }
+
+  .title-container {
+    h1 {
+      color: white;
+    }
+  }
+
+  .avatars {
+    display: flex;
+    gap: 2rem;
+
+    .avatar {
+      border: 0.4rem solid transparent;
+      padding: 0.4rem;
+      border-radius: 5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.5s ease-in-out;
+
+      img {
+        height: 6rem;
+        transition: 0.5s ease-in-out;
+      }
+    }
+
+    .selected {
+      border: 0.4rem solid #4e0eff;
+    }
+  }
+
+  .submit-btn {
+    background-color: #4e0eff;
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0.4rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+
+    &:hover {
+      background-color: #3b0ebf; /* Changed hover color for visibility */
+    }
+  }
+`;
+
