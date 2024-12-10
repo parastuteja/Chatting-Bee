@@ -5,7 +5,7 @@ import { Buffer } from "buffer";
 import loader from "../Assets/Loader.gif";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { setAvatarRoute } from "../utils/APIroutes";
 export default function SetAvatar() {
   const api = `https://api.multiavatar.com/4645646`;
@@ -22,59 +22,73 @@ export default function SetAvatar() {
   };
 
   useEffect(() => {
-    const localStorageKey = process.env.REACT_APP_LOCALHOST_KEY;
-    if (!localStorage.getItem(localStorageKey)) {
-      navigate("/login", { replace: true });
-    }
-  }, [navigate]);
+  if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+    navigate("/login");
+  }
+}, [navigate]);
 
-  const setProfilePicture = async () => {
-    if (selectedAvatar === undefined) {
-      toast.error("Please select an avatar", toastOptions);
-    } else {
-      const user = await JSON.parse(
-        localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+const setProfilePicture = async () => {
+  if (selectedAvatar === undefined) {
+    toast.error("Please select an avatar", toastOptions);
+  } else {
+    const userData = localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY);
+    
+    // Check if userData is null or undefined
+    if (!userData) {
+      toast.error("User  data not found. Please log in again.", toastOptions);
+      navigate("/login");
+      return;
+    }
+
+    // Parse userData only if it exists
+    let user;
+    try {
+      user = JSON.parse(userData);
+    } catch (error) {
+      toast.error("Error parsing user data. Please log in again.", toastOptions);
+      navigate("/login");
+      return;
+    }
+
+    const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
+      image: avatars[selectedAvatar],
+    });
+
+    if (data.isSet) {
+      user.isAvatarImageSet = true;
+      user.avatarImage = data.image;
+      localStorage.setItem(
+        process.env.REACT_APP_LOCALHOST_KEY,
+        JSON.stringify(user)
       );
-
-      const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
-        image: avatars[selectedAvatar],
-      });
-
-      if (data.isSet) {
-        user.isAvatarImageSet = true;
-        user.avatarImage = data.image;
-        localStorage.setItem(
-          process.env.REACT_APP_LOCALHOST_KEY,
-          JSON.stringify(user)
-        );
-        navigate("/");
-      } else {
-        toast.error("Error setting avatar. Please try again.", toastOptions);
-      }
+      navigate("/");
+    } else {
+      toast.error("Error setting avatar. Please try again.", toastOptions);
     }
-  };
+  }
+};
+
   useEffect(() => {
     const fetchAvatars = async () => {
-      const promises = Array(4).fill().map(() => {
-        const randomId = Math.round(Math.random() * 1000);
-        return axios.get(`${api}/${randomId}`);
-      });
-  
-      const responses = await Promise.all(promises);
-      const avatars = responses.map((response) => {
-        const buffer = new Buffer(response.data);
-        return buffer.toString("base64");
-      });
-  
-      setAvatars(avatars);
-      setIsLoading(false);
+      setIsLoading(true);
+      try {
+        const promises = Array(4).fill().map(() =>
+          axios.get(`${api}/${Math.round(Math.random() * 1000)}`)
+        );
+        const responses = await Promise.all(promises);
+        const avatars = responses.map((response) =>
+          Buffer.from(response.data).toString("base64")
+        );
+        setAvatars(avatars);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-  
     fetchAvatars();
   }, [api]);
- 
-
-    return (
+  return (
     <>
       {isLoading ? (
         <Container>
@@ -86,23 +100,20 @@ export default function SetAvatar() {
             <h1>Pick an Avatar as your profile picture</h1>
           </div>
           <div className="avatars">
-            {avatars.map((avatar, index) => {
-              return (
-                <div
-                  className={`avatar ${
-                    selectedAvatar === index ? "selected" : ""
-                  }`}
-                >
-                  <img
-                    src={`data:image/svg+xml;base64,${avatar}`}
-                    alt="avatar"
-                    key={avatar}
-                    onClick={() => setSelectedAvatar(index)}
-                  />
-                </div>
-              );
-            })}
-          </div>
+  {avatars.map((avatar, index) => (
+    <div
+      key={`avatar-${index}`}
+      className={`avatar ${selectedAvatar === index ? "selected" : ""}`}
+    >
+      <img
+        src={`data:image/svg+xml;base64,${avatar}`}
+        alt="avatar"
+        key={avatar}
+        onClick={() => setSelectedAvatar(index)}
+      />
+    </div>
+  ))}
+</div>
           <button onClick={setProfilePicture} className="submit-btn">
             Set as Profile Picture
           </button>
@@ -112,8 +123,6 @@ export default function SetAvatar() {
     </>
   );
 }
-
-
 
 const Container = styled.div`
   display: flex;
@@ -126,7 +135,7 @@ const Container = styled.div`
   width: 100vw;
 
   .loader {
-    max-width: 100%; /* Changed from max-inline-size to max-width */
+    max-inline-size: 100%;
   }
 
   .title-container {
@@ -134,7 +143,6 @@ const Container = styled.div`
       color: white;
     }
   }
-
   .avatars {
     display: flex;
     gap: 2rem;
@@ -147,18 +155,15 @@ const Container = styled.div`
       justify-content: center;
       align-items: center;
       transition: 0.5s ease-in-out;
-
       img {
         height: 6rem;
         transition: 0.5s ease-in-out;
       }
     }
-
     .selected {
       border: 0.4rem solid #4e0eff;
     }
   }
-
   .submit-btn {
     background-color: #4e0eff;
     color: white;
@@ -169,10 +174,8 @@ const Container = styled.div`
     border-radius: 0.4rem;
     font-size: 1rem;
     text-transform: uppercase;
-
     &:hover {
-      background-color: #3b0ebf; /* Changed hover color for visibility */
+      background-color: #4e0eff;
     }
   }
 `;
-
