@@ -5,7 +5,7 @@ import { Buffer } from "buffer";
 import loader from "../Assets/Loader.gif";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { setAvatarRoute } from "../utils/APIroutes";
 export default function SetAvatar() {
   const api = `https://api.multiavatar.com/4645646`;
@@ -21,10 +21,12 @@ export default function SetAvatar() {
     theme: "dark",
   };
 
-  useEffect(async () => {
-    if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY))
-      navigate("/login");
-  }, []);
+  useEffect(() => {
+    const localStorageKey = process.env.REACT_APP_LOCALHOST_KEY;
+    if (!localStorage.getItem(localStorageKey)) {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate]);
 
   const setProfilePicture = async () => {
     if (selectedAvatar === undefined) {
@@ -51,29 +53,28 @@ export default function SetAvatar() {
       }
     }
   };
-
   useEffect(() => {
-    const fetchData = async () => {
-      const data = [];
-      try {
-        for (let i = 0; i < 4; i++) {
-          const response = await axios.get(`${api}/${Math.round(Math.random() * 1000)}`);
-          const buffer = Buffer.from(response.data);
-          data.push(buffer.toString("base64"));
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setAvatars(data);
-        setIsLoading(false);
-      }
+    const fetchAvatars = async () => {
+      const promises = Array(4).fill().map(() => {
+        const randomId = Math.round(Math.random() * 1000);
+        return axios.get(`${api}/${randomId}`);
+      });
+  
+      const responses = await Promise.all(promises);
+      const avatars = responses.map((response) => {
+        const buffer = new Buffer(response.data);
+        return buffer.toString("base64");
+      });
+  
+      setAvatars(avatars);
+      setIsLoading(false);
     };
   
-    fetchData(); // Call the fetchData function here
-  
-    // No return statement needed here
-  }, []); // Add an empty dependency array to run this effect only once
-  return (
+    fetchAvatars();
+  }, [api]);
+ 
+
+    return (
     <>
       {isLoading ? (
         <Container>
