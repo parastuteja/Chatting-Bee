@@ -4,7 +4,7 @@ import Register from './pages/Register'
 import Login from './pages/Login'
 import Chat from './pages/Chat'
 import { BrowserRouter } from 'react-router-dom'
-import SetAvatar from './pages/SetAvatar'
+import SetAvatar from './Components/SetAvatar'
 
 function App() {
   return (
