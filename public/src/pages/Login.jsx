@@ -89,9 +89,10 @@ else if(password===''){
        <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         <img
-          className="mx-auto h-10 w-auto"
-          src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-          alt="Your Company"
+          className="mx-auto h-20
+           w-auto"
+          src={Logo}
+          alt="Chatting-Bee"
         />
         <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
           Sign in to your account
@@ -137,6 +138,7 @@ else if(password===''){
                 name="password"
                 id="password"
                 autoComplete="current-password"
+                onChange={e=>handleChange(e)}
                 required
                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
               />
@@ -159,7 +161,7 @@ else if(password===''){
             href="/Register"
             className="font-semibold text-indigo-600 hover:text-indigo-500"
           >
-            Start a 14 day free trial
+           Register Now
           </a>
         </p>
       </div>
