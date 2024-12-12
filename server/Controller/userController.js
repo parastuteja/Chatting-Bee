@@ -59,3 +59,13 @@ return req.json({
       next(ex)
     }
   }
+  module.exports.getAllusers=async(req,res,next)=>{
+    try{
+const users=await User.find({_id{$ne: req.params.id}}).select({
+  
+})
+    }
+    catch(ex){
+next(ex)
+    }
+  }
