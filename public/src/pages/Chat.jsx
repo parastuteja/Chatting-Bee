@@ -1,6 +1,33 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import axios from 'axios'
+import navigate from 'navigate';
+import { io } from "socket.io-client";
+import { useNavigate } from 'react-router-dom';
 
-function Chat() {
+import { host } from '../utils/APIroutes';
+export default function Chat() {
+  const socket=useRef()
+  const navigate=useNavigate()
+  const [contacts,setContacts]=useState([])
+  const[currentUser,setCurrentUser]=useState([])
+  useEffect(() => {
+    const checkUser  = async () => {
+      const userData = localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY);
+      if (!userData) {
+        navigate("/login");
+      } else {
+        setCurrentUser (JSON.parse(userData));
+      }
+    };
+  
+    checkUser ();
+  }, [navigate]);
+  useEffect(() => {
+    if (currentUser) {
+      socket.current = io(host);
+      socket.current.emit("add-user", currentUser._id);
+    }
+  }, [currentUser]);
   return (
     <div className="h-screen flex bg-gradient-to-r from-blue-50 to-indigo-100">
       {/* Contacts List */}
@@ -58,4 +85,4 @@ function Chat() {
   );
 }
 
-export default Chat;
+
