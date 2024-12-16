@@ -7,4 +7,5 @@ router.post("/Register",register)
 router.post("/Login",login)
  router.post('/SetAvatar/:id',setAvatar)
  router.get('/allusers/:id',)
+ 
 module.exports=router;

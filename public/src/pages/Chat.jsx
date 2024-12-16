@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios'
 import navigate from 'navigate';
-import { io } from "socket.io-client";
+
 import { useNavigate } from 'react-router-dom';
 
-import { host } from '../utils/APIroutes';
+import { alluserRoutes, host } from '../utils/APIroutes';
+import Contacts from '../Components/Contacts';
 export default function Chat() {
   const socket=useRef()
   const navigate=useNavigate()
@@ -22,12 +23,19 @@ export default function Chat() {
   
     checkUser ();
   }, [navigate]);
-  useEffect(() => {
-    if (currentUser) {
-      socket.current = io(host);
-      socket.current.emit("add-user", currentUser._id);
-    }
-  }, [currentUser]);
+  useEffect(()=>{
+ const checkAvatar= async()=>{
+  if(currentUser.isAvatarImageSet){
+    const data=await axios.get(`${alluserRoutes}/${currentUser._id}`)
+    setContacts(data.data)
+
+  }
+  else{
+    navigate('/setAvatar')
+  }
+ }    
+  })
+ 
   return (
     <div className="h-screen flex bg-gradient-to-r from-blue-50 to-indigo-100">
       {/* Contacts List */}
@@ -35,16 +43,7 @@ export default function Chat() {
         <div className="p-4 border-b border-gray-300 bg-purple-600 text-white">
           <h2 className="text-lg font-bold">Contacts</h2>
         </div>
-        <ul className="divide-y divide-gray-200">
-          {["Alice", "Bob", "Charlie", "Diana"].map((contact, index) => (
-            <li
-              key={index}
-              className="p-4 hover:bg-purple-100 cursor-pointer transition"
-            >
-              {contact}
-            </li>
-          ))}
-        </ul>
+       <Contacts contacts={contacts} currentUser={contacts}/>
       </div>
 
       {/* Chat Window */}
