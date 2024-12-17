@@ -29,7 +29,7 @@ const Contacts = ({ contacts, currentUser  }) => {
             <div className='Contacts'>
                 {contacts.map((contacts,index)=>{
                     return(
-                        <div key={contactsssName='contact' onClick={()=>changeCurrentChat(index,contacts)}
+                        <div key={contacts='contact' onClick={()=>changeCurrentChat(index,contacts)}
                     )
                 })}
             </div>
